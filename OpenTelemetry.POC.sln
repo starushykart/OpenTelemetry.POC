@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1705.6
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetry.POC.Web", "src\OpenTelemetry.POC.Web\OpenTelemetry.POC.Web.csproj", "{B7C76C97-9C21-4299-93B8-23D6E162312C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetry.POC.Consumer", "src\OpenTelemetry.POC.Consumer\OpenTelemetry.POC.Consumer.csproj", "{5D7A27CC-7760-45A9-A088-977DAB487F4F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B7C76C97-9C21-4299-93B8-23D6E162312C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7C76C97-9C21-4299-93B8-23D6E162312C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7C76C97-9C21-4299-93B8-23D6E162312C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7C76C97-9C21-4299-93B8-23D6E162312C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D7A27CC-7760-45A9-A088-977DAB487F4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D7A27CC-7760-45A9-A088-977DAB487F4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D7A27CC-7760-45A9-A088-977DAB487F4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D7A27CC-7760-45A9-A088-977DAB487F4F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {27A01798-A19C-4C13-959F-4501A26F8B52}
+	EndGlobalSection
+EndGlobal
