@@ -5,6 +5,7 @@ using MassTransit;
 using MassTransit.Logging;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.POC.Api.Database;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -39,11 +40,10 @@ builder.Services
 	.WithTracing(x => x
 		.AddSource(DiagnosticHeaders.DefaultListenerName)
 		.AddAspNetCoreInstrumentation()
-		//.AddEntityFrameworkCoreInstrumentation()
 		.AddNpgsql()
 		//.AddHttpClientInstrumentation()
 		.AddConsoleExporter()
-		.AddJaegerExporter());
+		.AddJaegerExporter(opt => opt.Protocol = JaegerExportProtocol.HttpBinaryThrift));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
