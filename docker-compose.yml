@@ -1,0 +1,73 @@
+﻿services:
+  
+  opentelemetry.poc.api:
+    image: opentelemetry.poc.api
+    build:
+      context: .
+      dockerfile: src/OpenTelemetry.POC.Api/Dockerfile
+    ports:
+      - "54203:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+    env_file:
+      - ./poc.env
+    depends_on:
+      localstack:
+        condition: service_healthy
+  
+  opentelemetry.poc.consumer:
+    image: opentelemetry.poc.consumer
+    build:
+      context: .
+      dockerfile: src/OpenTelemetry.POC.Consumer/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+    env_file:
+      - ./poc.env
+    depends_on:
+      localstack:
+        condition: service_healthy
+  
+  postgres:
+    image: postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB:-OT_POC}", "-U", "${POSTGRES_USER:-debug}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-OT_POC}
+      POSTGRES_USER: ${POSTGRES_USER:-debug}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-debug}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+    ports:
+      - "5432:5432"
+  
+  localstack:
+    image: localstack/localstack
+    healthcheck:
+      test: awslocal sns list-topics && awslocal sqs list-queues
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: sns,sqs
+  
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=:9411
+    ports:
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14269:14269"
+      - "14250:14250"
+      - "9411:9411"
+      - "4317:4317"
+      - "4318:4318"
