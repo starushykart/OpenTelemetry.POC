@@ -11,26 +11,38 @@ namespace OpenTelemetry.POC.Api.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
+	private readonly ILogger<WeatherForecastController> _logger;
+	private readonly AppDbContext _context;
+	private readonly IBus _bus;
+
+	public WeatherForecastController(IBus bus, AppDbContext context, ILogger<WeatherForecastController> logger)
+		=> (_bus, _context, _logger) = (bus, context, logger);
+	
 	[HttpGet(Name = "GetWeatherForecast")]
-	public async Task<IEnumerable<WeatherForecast>> Get(
-		[FromServices] IBus bus,
-		[FromServices] AppDbContext context)
+	public async Task<IEnumerable<WeatherForecast>> Get()
 	{
+		_logger.LogInformation("inside weather forecast");
+		
 		// interaction with db using EF
-		context.TesModels.Add(new TestModel
+		_context.TesModels.Add(new TestModel
 		{
 			Id = Guid.NewGuid(),
 			Data = DateTime.Now.ToString(CultureInfo.InvariantCulture)
 		});
-		await context.SaveChangesAsync();
+		
+		await _context.SaveChangesAsync();
 		
 		// interaction with sns/sqs using MassTransit
-		await bus.Publish<ITestMessage>(new
+		await _bus.Publish<ITestMessage>(new
 		{
 			Data = "some test message"
 		});
 
-		return Enumerable.Range(1, 5)
+		return GetForecast();
+	}
+
+	private static IEnumerable<WeatherForecast> GetForecast()
+		=> Enumerable.Range(1, 5)
 			.Select(index => new WeatherForecast
 			{
 				Date = DateTime.Now.AddDays(index),
@@ -38,5 +50,4 @@ public class WeatherForecastController : ControllerBase
 				Summary = WeatherForecast.Summaries[Random.Shared.Next(WeatherForecast.Summaries.Length)]
 			})
 			.ToArray();
-	}
 }

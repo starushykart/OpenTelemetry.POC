@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "src\Contracts\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetry.POC.Api", "src\OpenTelemetry.POC.Api\OpenTelemetry.POC.Api.csproj", "{716097CA-F2E7-4623-9BC9-6841696C5DC6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetry.POC.Web", "src\OpenTelemetry.POC.Web\OpenTelemetry.POC.Web.csproj", "{BAA89FAE-55F3-4D5F-8363-A382C4FFFA2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{716097CA-F2E7-4623-9BC9-6841696C5DC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{716097CA-F2E7-4623-9BC9-6841696C5DC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{716097CA-F2E7-4623-9BC9-6841696C5DC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAA89FAE-55F3-4D5F-8363-A382C4FFFA2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAA89FAE-55F3-4D5F-8363-A382C4FFFA2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAA89FAE-55F3-4D5F-8363-A382C4FFFA2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAA89FAE-55F3-4D5F-8363-A382C4FFFA2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

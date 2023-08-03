@@ -4,13 +4,27 @@ using Amazon.SQS;
 using MassTransit;
 using MassTransit.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Console;
 using Npgsql;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.POC.Api.Database;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Serilog;
+using Serilog.Enrichers.OpenTracing;
+using Serilog.Formatting.Compact;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication
+	.CreateBuilder(args);
+
+builder.Host.ConfigureLogging((_, logging) =>
+{
+	logging.AddJsonConsole(x=>x.IncludeScopes = true);
+	logging.Configure(options =>
+	{
+		options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId | ActivityTrackingOptions.TraceId;
+	});
+});
 
 builder.Services.AddDbContext<AppDbContext>(x => x
 	.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
