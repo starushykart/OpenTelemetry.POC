@@ -3,12 +3,11 @@ using Contracts;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.POC.Api.Database;
-using OpenTelemetry.POC.Api.Models;
 
 namespace OpenTelemetry.POC.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class WeatherForecastController : ControllerBase
 {
 	private readonly ILogger<WeatherForecastController> _logger;

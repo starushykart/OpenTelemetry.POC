@@ -11,7 +11,7 @@ builder.Services
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
         .AddConsoleExporter()
-        .AddJaegerExporter(opt => opt.Protocol = JaegerExportProtocol.HttpBinaryThrift));
+        .AddOtlpExporter());
 
 builder.Services.AddControllersWithViews();
 
@@ -19,7 +19,6 @@ var app = builder.Build();
 
 app.UseStaticFiles();
 app.UseRouting();
-
 
 app.MapControllerRoute(
     name: "default",

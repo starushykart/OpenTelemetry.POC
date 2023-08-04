@@ -1,4 +1,4 @@
-namespace OpenTelemetry.POC.Api.Models;
+namespace Contracts;
 
 public class WeatherForecast
 {
