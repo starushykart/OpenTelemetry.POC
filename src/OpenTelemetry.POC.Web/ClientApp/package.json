@@ -22,6 +22,7 @@
     "@angular/router": "^15.2.8",
     "@opentelemetry/auto-instrumentations-web": "^0.33.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.41.1",
+    "@opentelemetry/exporter-zipkin": "^1.15.2",
     "@opentelemetry/sdk-trace-web": "^1.15.1",
     "bootstrap": "^5.2.3",
     "jquery": "^3.6.4",

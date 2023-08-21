@@ -1,7 +1,8 @@
 ﻿services:
   
-  opentelemetry.poc.api:
+  poc.api:
     image: opentelemetry.poc.api
+    container_name: api
     build:
       context: .
       dockerfile: src/OpenTelemetry.POC.Api/Dockerfile
@@ -14,9 +15,12 @@
     depends_on:
       localstack:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
   
-  opentelemetry.poc.consumer:
+  poc.consumer:
     image: opentelemetry.poc.consumer
+    container_name: consumer
     build:
       context: .
       dockerfile: src/OpenTelemetry.POC.Consumer/Dockerfile
@@ -30,6 +34,7 @@
   
   postgres:
     image: postgres
+    container_name: postgres
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB:-OT_POC}", "-U", "${POSTGRES_USER:-debug}" ]
       interval: 10s
@@ -42,9 +47,10 @@
       POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
     ports:
       - "5432:5432"
-  
+
   localstack:
     image: localstack/localstack
+    container_name: localstack
     healthcheck:
       test: awslocal sns list-topics && awslocal sqs list-queues
       interval: 10s
@@ -58,27 +64,25 @@
   
   jaeger-all-in-one:
     image: jaegertracing/all-in-one:latest
+    container_name: jaeger
     environment:
       COLLECTOR_ZIPKIN_HTTP_PORT: 9411
     ports:
       - "16686:16686"
       - "14268"
       - "14250"
-#    ports:
-#      - "6831:6831/udp"
-#      - "6832:6832/udp"
-#      - "5778:5778"
-#      - "16686:16686"
-#      - "14268:14268"
-#      - "14269:14269"
-#      - "14250:14250"
-#      - "9411:9411"
-#      - "4317:4317"
-#      - "4318:4318"
   
+  zipkin-server:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin-server
+    restart: always
+    ports:
+      - "9411:9411"
+
   otel-collector:
     image: otel/opentelemetry-collector-contrib
     command: [ "--config=/etc/otel-collector-config.yaml" ]
+    container_name: otlp-colector
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
@@ -91,3 +95,64 @@
       - "55679:55679" # zpages extension
     depends_on:
       - jaeger-all-in-one
+      - elasticsearch
+  
+  apm-server:
+    user: root #change here
+    image: docker.elastic.co/apm/apm-server:8.8.1
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+    cap_drop: ["ALL"]
+    volumes:
+      - apmData:/usr/share/apm-server/data
+    ports:
+      - 8200:8200
+    command: >
+      apm-server -e
+        -E strict.perms=false
+        -E apm-server.rum.enabled=true
+        -E setup.kibana.host=kibana:5601
+        -E setup.template.settings.index.number_of_replicas=0
+        -E apm-server.kibana.enabled=true
+        -E apm-server.kibana.host=kibana:5601
+        -E output.elasticsearch.hosts=["elasticsearch:9200"]
+    depends_on:
+      - elasticsearch
+      - kibana
+
+  elasticsearch:
+    user: root #change here
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.1
+    environment:
+      - bootstrap.memory_lock=true
+      - cluster.name=docker-cluster
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-XX:UseAVX=2 -Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200   
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.8.1
+    restart: always
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+
+volumes:
+  esdata:
+    driver: local
+  apmData:
+    driver: local  

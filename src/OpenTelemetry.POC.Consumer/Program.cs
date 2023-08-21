@@ -8,6 +8,15 @@ using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddOpenTelemetry()
+	.ConfigureResource(x => x.AddService(builder.Environment.ApplicationName))
+	.WithTracing(x => x
+		.AddSource(DiagnosticHeaders.DefaultListenerName)
+		.AddAspNetCoreInstrumentation()
+		.AddHttpClientInstrumentation()
+		.AddJaegerExporter()
+		.AddZipkinExporter());
+
 builder.Services.AddMassTransit(cfg =>
 {
 	cfg.AddConsumers(typeof(TestMessageConsumer).Assembly);
@@ -28,14 +37,6 @@ builder.Services.AddMassTransit(cfg =>
 		x.ConfigureEndpoints(context);
 	});
 });
-
-builder.Services.AddOpenTelemetry()
-	.ConfigureResource(x => x.AddService(builder.Environment.ApplicationName))
-	.WithTracing(x => x
-		.AddSource(DiagnosticHeaders.DefaultListenerName)
-		.AddAspNetCoreInstrumentation()
-		.AddConsoleExporter()
-		.AddJaegerExporter());
 
 var app = builder.Build();
 

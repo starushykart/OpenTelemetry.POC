@@ -20,8 +20,6 @@ public class WeatherForecastController : ControllerBase
 	[HttpGet(Name = "GetWeatherForecast")]
 	public async Task<IEnumerable<WeatherForecast>> Get()
 	{
-		_logger.LogInformation("inside weather forecast");
-		
 		// interaction with db using EF
 		_context.TesModels.Add(new TestModel
 		{
@@ -36,6 +34,9 @@ public class WeatherForecastController : ControllerBase
 		{
 			Data = "some test message"
 		});
+		
+		_logger.LogInformation("Log from OpenTelemetry.POC.API");
+
 
 		return GetForecast();
 	}

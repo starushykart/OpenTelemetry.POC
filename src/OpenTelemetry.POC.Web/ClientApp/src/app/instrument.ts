@@ -7,8 +7,11 @@ import {
 } from '@opentelemetry/sdk-trace-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { ZipkinExporter } from '@opentelemetry/exporter-zipkin';
+
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
+
 
 const provider = new WebTracerProvider({
   resource: new Resource({
@@ -20,14 +23,9 @@ const provider = new WebTracerProvider({
 provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
 
 // Batch traces before sending them to OTLP collector
-provider.addSpanProcessor(
-  new BatchSpanProcessor(
-    new OTLPTraceExporter({
-      //url: 'http://localhost:4318/v1/traces', // URL of opentelemetry competible collector
-       headers: {}
-    }),
-  ),
-);
+provider.addSpanProcessor(new BatchSpanProcessor(new OTLPTraceExporter()));
+provider.addSpanProcessor(new BatchSpanProcessor(new ZipkinExporter()));
+
 
 provider.register();
 
