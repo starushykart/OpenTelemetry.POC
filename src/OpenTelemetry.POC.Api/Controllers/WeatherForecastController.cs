@@ -35,7 +35,7 @@ public class WeatherForecastController : ControllerBase
 			Data = "some test message"
 		});
 		
-		_logger.LogInformation("Log from OpenTelemetry.POC.API");
+		_logger.LogInformation("Log from OpenTelemetry.POC.Api");
 
 
 		return GetForecast();

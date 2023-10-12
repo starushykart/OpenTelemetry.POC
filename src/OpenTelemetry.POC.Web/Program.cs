@@ -3,6 +3,7 @@ using OpenTelemetry.Exporter;
 using OpenTelemetry.POC.Web.Extensions;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Serilog;
 
 var builder = WebApplication
     .CreateBuilder(args)
@@ -15,7 +16,6 @@ builder.Services
     .WithTracing(x => x
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddConsoleExporter()
         .AddOtlpExporter(o =>
         {
             o.ExportProcessorType = ExportProcessorType.Simple;
@@ -32,6 +32,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
 app.UseStaticFiles();
 app.UseRouting();
 

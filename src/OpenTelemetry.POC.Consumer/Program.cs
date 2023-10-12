@@ -3,10 +3,13 @@ using Amazon.SQS;
 using MassTransit;
 using MassTransit.Logging;
 using OpenTelemetry.POC.Consumer.Consumers;
+using OpenTelemetry.POC.Consumer.Extensions;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication
+	.CreateBuilder(args)
+	.UseSerilog();
 
 builder.Services.AddOpenTelemetry()
 	.ConfigureResource(x => x.AddService(builder.Environment.ApplicationName))
@@ -14,7 +17,6 @@ builder.Services.AddOpenTelemetry()
 		.AddSource(DiagnosticHeaders.DefaultListenerName)
 		.AddAspNetCoreInstrumentation()
 		.AddHttpClientInstrumentation()
-		.AddJaegerExporter()
 		.AddZipkinExporter());
 
 builder.Services.AddMassTransit(cfg =>

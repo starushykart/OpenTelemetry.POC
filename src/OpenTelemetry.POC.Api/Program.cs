@@ -5,11 +5,14 @@ using MassTransit.Logging;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using OpenTelemetry.POC.Api.Database;
+using OpenTelemetry.POC.Api.Extensions;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Serilog;
 
 var builder = WebApplication
-	.CreateBuilder(args);
+	.CreateBuilder(args)
+	.UseSerilog();
 
 builder.Services
 	.AddOpenTelemetry()
@@ -19,8 +22,6 @@ builder.Services
 		.AddAspNetCoreInstrumentation()
 		.AddHttpClientInstrumentation()
 		.AddNpgsql()
-		.AddConsoleExporter()
-		.AddJaegerExporter()
 		.AddZipkinExporter());
 
 builder.Services.AddDbContext<AppDbContext>(x => x
@@ -50,6 +51,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
